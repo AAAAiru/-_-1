@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#142c32">
+  <title>看见之后｜多模态视觉问答实验室</title>
+  <link rel="stylesheet" href="./demo.css">
+  <script src="./demo.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <div class="topline"><span>T3—1 · 应用人工智能课程设计</span><span>本机运行 / NVIDIA RTX 3050</span></div>
+  <header class="masthead">
+    <nav class="nav wrap" aria-label="页面导航">
+      <a class="wordmark" href="#top"><span class="wordmark-symbol" aria-hidden="true">V<span>Q</span>A</span><span>视觉问答实验室</span></a>
+      <div class="navlinks"><a href="#live">现场体验</a><a href="#evidence">评测证据</a><a href="#attention">模型关注</a><a href="#experiments">改进实验</a></div>
+      <a class="nav-cta" href="#live">开始提问 <span aria-hidden="true">↗</span></a>
+    </nav>
+    <div class="hero wrap" id="top">
+      <div class="hero-copy"><p class="eyebrow light">VISUAL QUESTION ANSWERING / VQA</p>
+        <h1>让图像回答<br><em>你的问题。</em></h1>
+        <p class="hero-lead">上传一张图片，用英文提问，观察 AI 如何把视觉信息转成答案。每项结论都能追溯到模型输出与人工核对。</p>
+        <div class="hero-actions"><a class="button button-bright" href="#live">现场试一题 <span aria-hidden="true">↘</span></a><a class="text-link" href="#evidence">查看实验结果 <span aria-hidden="true">→</span></a></div>
+      </div>
+      <div class="hero-proof" aria-label="项目关键结果"><div class="proof-big"><strong id="hero-score">45<small>/50</small></strong><span>基础题人工判对</span></div><div class="proof-line"></div><p>模型：Salesforce / BLIP VQA Base<br>方式：零样本推理 · 真实图片评测</p><div class="proof-stamp">实验可复现<br><b>01 / 06</b></div></div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section live-section wrap" id="live" aria-labelledby="live-title">
+      <div class="section-heading"><div><p class="eyebrow">01 / LIVE DEMO</p><h2 id="live-title">现场问一问</h2></div><p>图片在本机送入模型。首次提问需要加载权重，请稍候。</p></div>
+      <div class="live-grid"><div class="upload-panel">
+        <label class="image-drop" id="drop-area" for="image-input"><input id="image-input" type="file" accept="image/jpeg,image/png,image/webp" aria-label="上传图片"><span id="drop-copy"><b>把图片放到这里</b><small>或点击选择 JPG、PNG、WebP · 最大 12 MB</small><span class="drop-mark" aria-hidden="true">＋</span></span><img id="image-preview" alt="已上传图片预览" hidden></label>
+        <div class="sample-row"><span>快速体验</span><button type="button" class="sample" data-sample="good">颜色识别</button><button type="button" class="sample" data-sample="medium">场景理解</button><button type="button" class="sample" data-sample="bad">错误案例</button></div>
+        <label class="field-label" for="question-input">用英文提问</label><input class="question-input" id="question-input" type="text" value="What color is the curb?" maxlength="500" placeholder="例如：How many cats are in the picture?">
+        <button type="button" class="button button-dark ask-button" id="ask-button">同时生成三项结果 <span aria-hidden="true">→</span></button>
+        <p class="live-status" id="live-status" role="status">选择图片后提问；首次运行需加载两个模型。</p>
+      </div><div class="result-panel"><div class="result-top"><span class="eyebrow">THREE VIEWS / 同题对照</span><span id="device-label">设备待运行</span></div>
+        <div class="live-results" aria-live="polite">
+          <div class="live-result-card"><small>01 · BLIP 原始回答</small><p id="answer-text">等待提问</p></div>
+          <div class="live-result-card"><small>02 · SmolVLM 开放式回答</small><p id="open-answer-text">等待提问</p></div>
+          <div class="live-result-card heat-card"><small>03 · BLIP 图文交叉注意力</small><label class="heat-label" for="heat-token">查看范围 <select id="heat-token" disabled><option value="all">全部问题词平均</option></select></label><img id="live-heatmap" alt="当前图片与问题对应的 BLIP 注意力热图" hidden><p id="heat-placeholder">提问后显示热图</p><p class="heat-note">亮色表示相对较高的图文关联。每种视图单独归一化，亮度不能跨词比较；注意力不是物体定位图。</p></div>
+        </div><div class="result-bottom"><span>同一张图片 · 同一个问题</span><span>模型原始输出需人工核对；热图不能证明回答原因</span></div></div></div>
+    </section>
+
+    <section class="section evidence-section" id="evidence" aria-labelledby="evidence-title"><div class="wrap">
+      <div class="section-heading"><div><p class="eyebrow">02 / BASELINE</p><h2 id="evidence-title">先看基线，再谈改进</h2></div><p>50 张不同图片，保留数据集问题与参考答案，并逐题人工判分。</p></div>
+      <div class="baseline-layout"><div class="headline-score"><span>人工判定正确率</span><strong id="baseline-percent">90.0<small>%</small></strong><div class="meter"><i id="baseline-meter" style="width:90%"></i></div><p><b id="baseline-count">45 / 50</b> 题正确 · VQA v2 子集</p><small>这是所选题集结果，不代表完整 VQA v2 的模型准确率。</small></div><div class="category-board"><div class="category-header"><span>题型分布与答对数</span><span>答对 / 总数</span></div><div id="category-bars" class="category-bars">正在读取…</div></div></div>
+      <div class="subhead"><div><h3>三道题，看见三种表现</h3><p>以下结果由 Hugging Face 的 visual-question-answering pipeline 零样本运行得到：从准确回答，到宽泛回答，再到明确错误。</p></div><span class="sub-index">GOOD / MEDIUM / BAD</span></div>
+      <div id="example-cards" class="example-grid"></div>
+      <details class="question-drawer"><summary>展开 50 题人工核对清单 <span aria-hidden="true">＋</span></summary><div class="question-tools"><button type="button" class="chip active" data-review-filter="all">全部</button><button type="button" class="chip" data-review-filter="wrong">答错的 5 题</button><input id="review-search" type="search" placeholder="搜索问题、答案或题型" aria-label="搜索评测题目"></div><div id="review-list" class="review-list"></div></details>
+    </div></section>
+
+    <section class="section attention-section wrap" id="attention" aria-labelledby="attention-title"><div class="section-heading"><div><p class="eyebrow">03 / ATTENTION</p><h2 id="attention-title">模型看向哪里？</h2></div><p>读取 BLIP 图文交叉注意力，观察不同问题下图像区域的亮度变化。</p></div>
+      <div class="attention-controls" role="tablist" aria-label="注意力案例"><button type="button" class="tab active" data-attention="好" role="tab" aria-selected="true">好例 · 颜色识别</button><button type="button" class="tab" data-attention="中" role="tab" aria-selected="false">中例 · 场景理解</button><button type="button" class="tab" data-attention="差" role="tab" aria-selected="false">差例 · 建筑颜色</button></div>
+      <div class="attention-view"><div class="attention-figure"><img id="attention-image" src="./assets/attention/good.png" alt="原图与注意力热力图" loading="lazy"></div><div class="attention-aside"><span class="eyebrow">QUESTION → IMAGE</span><h3 id="attention-question">正在读取…</h3><div class="answer-pair"><div><small>模型回答</small><b id="attention-answer">—</b></div><div><small>参考答案</small><b id="attention-reference">—</b></div></div><p id="attention-note"></p><p class="caution">热力图是模型内部注意力的可视化，不等于可靠的物体定位，也不能证明回答的因果来源。</p></div></div>
+    </section>
+
+    <section class="section error-section" id="errors" aria-labelledby="errors-title"><div class="wrap"><div class="section-heading"><div><p class="eyebrow">04 / ERROR ANALYSIS</p><h2 id="errors-title">答错时，究竟错在哪？</h2></div><p>结合原图、改写问句和局部裁剪，区分视觉计数、目标识别与关系理解。</p></div>
+      <div id="error-cards" class="error-grid"></div><div class="evidence-note"><b>分析原则</b><span>“视觉错误”与“语言／关系错误”是基于观察的可能原因。一次回答或一张注意力图，不能单独证明模型内部的错误位置。</span></div>
+    </div></section>
+
+    <section class="section experiment-section wrap" id="experiments" aria-labelledby="experiments-title"><div class="section-heading"><div><p class="eyebrow">05 / EXPERIMENTS</p><h2 id="experiments-title">改进，交给数据检验</h2></div><p>相同题集、明确判分，记录有效的变化，也记录没有带来提升的方法。</p></div>
+      <div class="experiment-stack"><article class="experiment-card"><div class="experiment-intro"><span class="experiment-no">01</span><div><h3>注意力定位后再问答</h3><p>用模型注意力估计相关区域，裁剪后再次运行 BLIP。</p></div><span class="status status-down">整体下降</span></div><div class="experiment-body"><div class="score-compare"><div class="score-row"><span>原始 BLIP</span><div class="score-track"><i style="width:90%"></i></div><strong id="spatial-base-score">27 / 30</strong></div><div class="score-row"><span>定位裁剪</span><div class="score-track amber"><i style="width:76.7%"></i></div><strong id="spatial-crop-score">23 / 30</strong></div></div><p class="experiment-takeaway">改对 <b id="improved-count">2</b> 题，同时使 <b id="regressed-count">6</b> 题从对变错。裁剪可能丢掉判断所需的背景。</p><div class="mini-switch"><button type="button" class="chip active" data-spatial="improved">看改对的题</button><button type="button" class="chip" data-spatial="regressed">看退步的题</button></div><div id="spatial-cases" class="mini-cases"></div></div></article>
+      <article class="experiment-card"><div class="experiment-intro"><span class="experiment-no">02</span><div><h3>冻结视觉编码器微调</h3><p>用已核对的 80 张图训练答案解码器最后一层与输出层。</p></div><span class="status status-flat">无实质变化</span></div><div class="experiment-body two-column"><div class="diagram"><div class="diagram-box frozen">视觉编码器 <small>冻结</small></div><div class="diagram-arrow">→</div><div class="diagram-box frozen">问题编码器 <small>冻结</small></div><div class="diagram-arrow">→</div><div class="diagram-box trainable">答案生成端 <small>训练</small></div></div><div class="note-block"><b>独立 30 题的唯一变化</b><p id="finetune-change">one → 1，语义相同。未观察到实质准确率提升。</p><small>BLIP 是生成式 VQA 模型，没有独立的分类头；这里只更新答案生成端的一部分。</small></div></div></article>
+      <article class="experiment-card"><div class="experiment-intro"><span class="experiment-no">03</span><div><h3>ResNet50 与 ViT-B/16</h3><p>冻结视觉编码器，使用相同问题特征与答案分类器。</p></div><span class="status status-flat">两者持平</span></div><div class="experiment-body"><div class="encoder-bars" id="encoder-bars"></div><p class="experiment-takeaway">80 道训练题有 57 种答案；测试中 8 题的答案不在训练词表。这个小样本分类实验不能与生成式 BLIP 的分数直接比较。</p></div></article></div>
+    </section>
+
+    <section class="section open-section" id="open-ended" aria-labelledby="open-title"><div class="wrap"><div class="section-heading"><div><p class="eyebrow">06 / OPEN ANSWER</p><h2 id="open-title">答案也可以是一段描述</h2></div><p>SmolVLM-256M-Instruct 根据图片生成自由文本；与 BLIP 的短答案并排观察。</p></div><div id="open-cards" class="open-grid"></div><p class="open-caution">两列使用的提示任务不同，不能直接比较准确率。生成描述可能包含图片无法支持的细节，展示时应逐句核对。</p></div></section>
+  </main>
+
+  <footer class="footer"><div class="wrap footer-layout"><div><b>VQA 视觉问答实验室</b><p>应用人工智能 · T3—1 多模态视觉问答</p></div><div><b>实验口径</b><p>基础 50 题与空间专项 30 题为人工核对结果；独立 30 题的部分替换题尚待最终确认。</p></div><a href="#top">回到顶部 ↑</a></div></footer>
+</body>
+</html>
