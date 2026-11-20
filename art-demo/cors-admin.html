@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>CORS 域管理</title>
+  <style>
+    body { font-family: sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    input { width: 100%; padding: 0.5rem; margin: 0.5rem 0; }
+    button { margin-right: 0.5rem; padding: 0.4rem 0.8rem; }
+    ul { padding-left: 1.2rem; }
+    #msg { color: #333; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>CORS 域动态管理</h1>
+  <p>管理 Web 服务 A 允许的跨域来源（Origin）。</p>
+  <label>Origin 地址（如 http://localhost:6060）</label>
+  <input id="originInput" type="text" placeholder="http://localhost:6060" />
+  <div>
+    <button id="btnAdd">添加</button>
+    <button id="btnRemove">删除</button>
+    <button id="btnRefresh">刷新列表</button>
+  </div>
+  <h2>当前白名单</h2>
+  <ul id="originList"></ul>
+  <p id="msg"></p>
+  <script>
+    const API = '/api/cors';
+    const listEl = document.getElementById('originList');
+    const msgEl = document.getElementById('msg');
+
+    async function loadOrigins() {
+      const res = await fetch(API + '/origins');
+      const data = await res.json();
+      listEl.innerHTML = '';
+      (data.origins || []).forEach((o) => {
+        const li = document.createElement('li');
+        li.textContent = o;
+        listEl.appendChild(li);
+      });
+    }
+
+    async function postOrigin(method) {
+      const origin = document.getElementById('originInput').value.trim();
+      if (!origin) {
+        msgEl.textContent = '请输入 Origin';
+        return;
+      }
+      const res = await fetch(API + '/origins', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ origin }),
+      });
+      const data = await res.json();
+      msgEl.textContent = data.message || JSON.stringify(data);
+      await loadOrigins();
+    }
+
+    document.getElementById('btnAdd').onclick = () => postOrigin('POST');
+    document.getElementById('btnRemove').onclick = () => postOrigin('DELETE');
+    document.getElementById('btnRefresh').onclick = () => loadOrigins();
+    loadOrigins();
+  </script>
+</body>
+</html>

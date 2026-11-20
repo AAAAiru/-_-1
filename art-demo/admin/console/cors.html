@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>CORS 域管理控制台</title>
+</head>
+<body>
+  <h1>CORS 域管理</h1>
+  <label>Origin：</label>
+  <input id="originInput" type="text" value="http://localhost:8080" />
+  <button id="btnAdd">添加源</button>
+  <pre id="msg"></pre>
+  <ul id="list"></ul>
+  <script>
+    const msg = document.getElementById('msg');
+    const list = document.getElementById('list');
+
+    async function refresh() {
+      const res = await fetch('/api/cors/origins');
+      const data = await res.json();
+      list.innerHTML = '';
+      (data.origins || []).forEach((o) => {
+        const li = document.createElement('li');
+        li.textContent = o;
+        list.appendChild(li);
+      });
+    }
+
+    document.getElementById('btnAdd').onclick = async () => {
+      const origin = document.getElementById('originInput').value.trim();
+      try {
+        const res = await fetch('/api/cors/origins', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ origin }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          msg.textContent = '错误：' + (data.message || res.statusText);
+        } else {
+          msg.textContent = data.message || '成功';
+        }
+        await refresh();
+      } catch (e) {
+        msg.textContent = '错误：' + e.message;
+      }
+    };
+
+    refresh();
+  </script>
+</body>
+</html>
